@@ -1,0 +1,35 @@
+using System;
+using System.IO;
+using Confuser.Core;
+using Confuser.Renamer;
+
+namespace Obfuscator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Set the input and output assemblies
+            string inputAssembly = "input.dll";
+            string outputAssembly = "output.dll";
+
+            // Create a new ConfuserEx context
+            var ctx = new ConfuserContext();
+
+            // Add the input assembly to the context
+            ctx.Modules.Add(inputAssembly);
+
+            // Enable the renamer protection
+            ctx.Registry.GetService<IRenamerService>().AddProtection(new RenamerProtection());
+
+            // Enable the anti-debugging protection
+            ctx.Registry.GetService<IDebuggerService>().AddProtection(new DebuggerProtection());
+
+            // Enable the anti-tampering protection
+            ctx.Registry.GetService<ITamperService>().AddProtection(new TamperProtection());
+
+            // Obfuscate the assembly
+            ctx.Packer.Pack(outputAssembly);
+        }
+    }
+}
